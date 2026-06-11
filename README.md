@@ -2,6 +2,8 @@
 
 ### An Embodied Simulation Platform, Benchmark, and Data-Efficient Augmentation Framework for Wet-Lab Robotics
 
+[English](README.md) | [简体中文](README_zh-CN.md)
+
 [![Isaac Sim](https://img.shields.io/badge/Isaac%20Sim-5.1-76B900)](https://developer.nvidia.com/isaac-sim)
 [![Isaac Lab](https://img.shields.io/badge/Isaac%20Lab-2.3-76B900)](https://isaac-sim.github.io/IsaacLab/)
 [![LeRobot](https://img.shields.io/badge/LeRobot-ACT%20%7C%20SmolVLA%20%7C%20PI0-yellow)](https://github.com/huggingface/lerobot)
@@ -13,7 +15,11 @@ Pipette currently provides **43 editable wet-lab assets** and an **11-task bench
 
 > 中文简介：Pipette 面向生物医学湿实验室机器人操作，提供从 USD 场景与任务注册、人工示教、仿真级数据增强、LeRobot 转换，到 ACT、SmolVLA、PI0 训练和闭环评测的一体化流程。
 
-![Pipette platform overview](docs/assets/pipette_overview.png)
+## Platform Overview
+
+<p align="center">
+  <img src="docs/assets/pipette_overview.png" alt="Pipette platform overview" width="100%">
+</p>
 
 ## Highlights
 
@@ -26,37 +32,16 @@ Pipette currently provides **43 editable wet-lab assets** and an **11-task bench
 - **Natural-language Agent:** command-line and web agents orchestrate scene construction, task registration, collection, augmentation, training, and evaluation.
 
 
-All benchmark tasks use:
-
-| Component | Configuration |
-|---|---|
-| Robot | Franka Panda |
-| Visual observations | Top, main, and wrist RGB cameras |
-| Image resolution | `400 x 400` per camera |
-| Proprioceptive state | 7 arm joints + 1 gripper state |
-| Action | 7 joint targets + 1 gripper command |
-| Control frequency | 30 Hz |
-| Policy query frequency | 10 Hz |
-| Demonstration storage | HDF5 |
-| Training dataset format | LeRobot |
-
 ## Benchmark Tasks
 
-| Category | Task ID | Task |
+| Sample and Cultureware | Equipment Operation | Placement and Relocation |
 |---|---|---|
-| Sample and cultureware | `pick_up_the_tube` | Pick up a test tube |
-| Sample and cultureware | `pick_up_the_pipette` | Pick up and position a pipette near a petri dish |
-| Sample and cultureware | `take_out_the_petri_dish` | Remove a petri dish from the incubator |
-| Sample and cultureware | `place_the_petri_dish` | Place a petri dish in the incubator |
-| Equipment operation | `close_the_centrifuge_lid` | Close the centrifuge lid |
-| Equipment operation | `open_the_centrifuge_lid` | Press the virtual button and open the centrifuge lid |
-| Equipment operation | `open_the_water_bath_lid` | Open the water-bath lid |
-| Equipment operation | `close_the_spectrophotometer` | Close the spectrophotometer lid |
-| Placement and relocation | `place_the_centrifuge_tube_on_the_balance` | Place a centrifuge tube on an electronic balance |
-| Placement and relocation | `take_the_centrifuge_tube_from_the_balance` | Remove a centrifuge tube from the balance |
-| Placement and relocation | `place_the_pipette_on_the_pipette_stand` | Place a pipette on its stand |
+| Pick up the test tube | Close the centrifuge lid | Place the centrifuge tube on the balance |
+| Position the pipette over the petri dish | Open the centrifuge lid | Remove the centrifuge tube from the balance |
+| Remove the petri dish from the incubator | Open the water bath lid | Place the pipette on the pipette stand |
+| Place the petri dish in the incubator | Close the spectrophotometer lid | |
 
-Task definitions, camera poses, scene paths, object prim paths, language instructions, and success thresholds are centralized in [`Data/task_registry.py`](Data/task_registry.py).
+The benchmark covers sample handling, cultureware manipulation, equipment operation, and precision placement.
 
 ## Installation
 
