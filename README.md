@@ -18,7 +18,7 @@ Pipette currently provides **43 editable wet-lab assets** and an **11-task bench
 ## Platform Overview
 
 <p align="center">
-  <img src="../docs/figures/pipette_overview.png" alt="Pipette platform overview" width="100%">
+  <img src="./docs/figures/pipette_overview.png" alt="Pipette platform overview" width="100%">
 </p>
 
 ## Highlights
