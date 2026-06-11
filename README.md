@@ -164,15 +164,6 @@ python Data/inspect_hdf5_dataset.py \
   --show-attrs
 ```
 
-```bash
-python Data/Replay_collection.py \
-  --task_id pick_up_the_tube \
-  --dataset_file ./datasets/pick_up_the_tube.hdf5 \
-  --demo_index 0 \
-  --replay_mode state \
-  --speed 1.0
-```
-
 ### 3. Generate simulation-augmented data
 
 ```bash
@@ -183,7 +174,7 @@ python Data/Generate_data.py \
   --num_envs 3 \
   --light_intensity_scales 0.8 \
   --temporal_speed_scales 1.2 \
-  --camera_jitter_count 1 \
+  --camera_jitter_count 5 \
   --include_original \
   --headless
 ```
@@ -290,18 +281,10 @@ Simulation augmentation substantially improves SmolVLA and moderately improves P
 |-- Client/                 # Isaac Lab policy evaluation clients
 |-- Data/                   # Collection, replay, augmentation, conversion, and evaluators
 |-- Server/                 # Unified LeRobot ZMQ inference server
-|-- tests/                  # Unit tests for transport, evaluators, Agent, and utilities
 |-- run_lerobot_batch_train.py
 `-- README.md
 ```
 
-## Tests
-
-Tests that do not require a running Isaac Sim application can be executed with:
-
-```bash
-python -m unittest discover -s tests -v
-```
 
 ## Limitations
 
