@@ -11,7 +11,6 @@
 
 **Pipette** is an embodied simulation platform for data-efficient wet-lab robot learning. It combines editable laboratory assets, language-guided task registration, teleoperation data collection, success-verified simulation augmentation, LeRobot dataset conversion, VLA policy training, and closed-loop evaluation in one workflow.
 
-> 中文简介：Pipette 面向生物医学湿实验室机器人操作，提供从 USD 场景与任务注册、人工示教、仿真级数据增强、LeRobot 转换，到 ACT、SmolVLA、PI0 训练和闭环评测的一体化流程。
 
 ## Platform Overview
 
@@ -157,12 +156,6 @@ Open [http://127.0.0.1:7860](http://127.0.0.1:7860), then enter instructions suc
 用 PI0 运行推理评估
 ```
 
-The terminal version is also available:
-
-```bash
-python Agent/agent.py
-```
-
 See [`Agent/README.md`](Agent/README.md) for Agent configuration, OpenAI-compatible intent parsing, web controls, and optional Tencent Hunyuan3D asset generation.
 
 ## Data Pipeline
@@ -184,7 +177,7 @@ Keyboard controls:
 
 Gamepad collection is implemented in `Data/Gamepad_collection.py`.
 
-### 2. Inspect or replay a dataset
+### 2. Inspect dataset
 
 ```bash
 python Data/inspect_hdf5_dataset.py \
@@ -289,18 +282,6 @@ Available clients:
 
 Each episode records success or failure, failure reason, runtime, policy and control frequencies, and task-specific evaluator metrics.
 
-## Results
-
-The manuscript evaluates each policy on 100 episodes per task after training with 30 human demonstrations per task.
-
-| Policy | Raw demonstrations | Raw + simulation augmentation |
-|---|---:|---:|
-| ACT | **65.5%** | 62.7% |
-| SmolVLA | 44.1% | **74.7%** |
-| PI0 | 40.4% | **46.5%** |
-
-Simulation augmentation substantially improves SmolVLA and moderately improves PI0 on average. The effect is task-dependent: fine placement and contact-sensitive tasks may degrade when perturbations broaden the action distribution too aggressively.
-
 ## Repository Structure
 
 ```text
@@ -321,19 +302,8 @@ Simulation augmentation substantially improves SmolVLA and moderately improves P
 - Success evaluators are currently task-specific and threshold-based.
 - Language-guided task registration still requires users to verify USD paths, prim paths, camera settings, and success thresholds.
 
-## Citation
 
-If you use Pipette in your research, please cite the accompanying manuscript:
-
-```bibtex
-@misc{liu2026pipette,
-  title  = {An Embodied Simulation Platform, Benchmark, and Data-Efficient Augmentation Framework for Wet-Lab Robotics},
-  author = {Liu, Zhe and Jin, Huanbo and Du, Zhaohui and Wang, Zhe and Xu, He and Li, Peijia and Gu, Jiaming and Lu, Quan and Wang, Qi and Ji, Bin and Xiao, Ting},
-  year   = {2026},
-  note   = {Manuscript}
-}
-```
 
 ## Acknowledgements
 
-Pipette builds on [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim), [Isaac Lab](https://isaac-sim.github.io/IsaacLab/), and [LeRobot](https://github.com/huggingface/lerobot). The organization of this README is inspired in part by [BioProVLA-Agent](https://github.com/no-guess/BioProVLA-Agent).
+Pipette builds on [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim), [Isaac Lab](https://isaac-sim.github.io/IsaacLab/), and [LeRobot](https://github.com/huggingface/lerobot). 

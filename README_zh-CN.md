@@ -154,12 +154,6 @@ python Agent/web_agent.py
 用 PI0 运行推理评估
 ```
 
-也可以使用命令行 Agent：
-
-```bash
-python Agent/agent.py
-```
-
 Agent 的接口配置、网页控制和腾讯混元生 3D 资产生成功能请参阅 [`Agent/README.md`](Agent/README.md)。
 
 ## 数据流程
@@ -181,21 +175,12 @@ python Data/Keyboard_collection.py \
 
 手柄采集入口位于 `Data/Gamepad_collection.py`。
 
-### 2. 检查或回放数据
+### 2. 检查数据
 
 ```bash
 python Data/inspect_hdf5_dataset.py \
   --file ./datasets/pick_up_the_tube.hdf5 \
   --show-attrs
-```
-
-```bash
-python Data/Replay_collection.py \
-  --task_id pick_up_the_tube \
-  --dataset_file ./datasets/pick_up_the_tube.hdf5 \
-  --demo_index 0 \
-  --replay_mode state \
-  --speed 1.0
 ```
 
 ### 3. 生成仿真增强数据
@@ -295,18 +280,6 @@ python Client/inference_smolvla.py \
 
 每个 episode 会记录成功或失败、失败原因、运行时间、策略频率、控制频率和任务评估指标。
 
-## 实验结果
-
-论文实验为每个任务采集 30 条人工示教，并对每个模型在每项任务上评测 100 个 episode。
-
-| 策略 | 原始示教 | 原始示教 + 仿真增强 |
-|---|---:|---:|
-| ACT | **65.5%** | 62.7% |
-| SmolVLA | 44.1% | **74.7%** |
-| PI0 | 40.4% | **46.5%** |
-
-仿真增强显著提升了 SmolVLA 的平均成功率，并对 PI0 带来一定改善。增强效果与任务类型有关：对于精确放置和接触敏感任务，过大的扰动范围可能使动作分布过于分散，进而降低策略性能。
-
 ## 仓库结构
 
 ```text
@@ -315,17 +288,8 @@ python Client/inference_smolvla.py \
 |-- Client/                 # Isaac Lab 策略评测客户端
 |-- Data/                   # 采集、回放、增强、转换和成功评估
 |-- Server/                 # 统一 LeRobot ZMQ 推理服务
-|-- tests/                  # 通信、评估器、Agent 和工具测试
 |-- run_lerobot_batch_train.py
 `-- README.md
-```
-
-## 测试
-
-不依赖 Isaac Sim 图形进程的测试可通过以下命令运行：
-
-```bash
-python -m unittest discover -s tests -v
 ```
 
 ## 当前限制
@@ -335,19 +299,7 @@ python -m unittest discover -s tests -v
 - 任务成功主要由针对不同任务编写的阈值评估器判定。
 - 语言引导任务注册后，仍需人工确认 USD 路径、Prim 路径、相机配置和成功阈值。
 
-## 引用
-
-如果 Pipette 对你的研究有帮助，请引用相关论文：
-
-```bibtex
-@misc{liu2026pipette,
-  title  = {An Embodied Simulation Platform, Benchmark, and Data-Efficient Augmentation Framework for Wet-Lab Robotics},
-  author = {Liu, Zhe and Jin, Huanbo and Du, Zhaohui and Wang, Zhe and Xu, He and Li, Peijia and Gu, Jiaming and Lu, Quan and Wang, Qi and Ji, Bin and Xiao, Ting},
-  year   = {2026},
-  note   = {Manuscript}
-}
-```
 
 ## 致谢
 
-Pipette 基于 [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim)、[Isaac Lab](https://isaac-sim.github.io/IsaacLab/) 和 [LeRobot](https://github.com/huggingface/lerobot) 构建。README 的组织方式部分参考了 [BioProVLA-Agent](https://github.com/no-guess/BioProVLA-Agent)。
+Pipette 基于 [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim)、[Isaac Lab](https://isaac-sim.github.io/IsaacLab/) 和 [LeRobot](https://github.com/huggingface/lerobot) 构建。
