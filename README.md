@@ -11,8 +11,6 @@
 
 **Pipette** is an embodied simulation platform for data-efficient wet-lab robot learning. It combines editable laboratory assets, language-guided task registration, teleoperation data collection, success-verified simulation augmentation, LeRobot dataset conversion, VLA policy training, and closed-loop evaluation in one workflow.
 
-Pipette currently provides **43 editable wet-lab assets** and an **11-task benchmark** built around a Franka Panda robot. The benchmark supports ACT, SmolVLA, and PI0 policies under the same multi-view observations, action space, and task-level success criteria.
-
 > 中文简介：Pipette 面向生物医学湿实验室机器人操作，提供从 USD 场景与任务注册、人工示教、仿真级数据增强、LeRobot 转换，到 ACT、SmolVLA、PI0 训练和闭环评测的一体化流程。
 
 ## Platform Overview
@@ -45,37 +43,82 @@ The benchmark covers sample handling, cultureware manipulation, equipment operat
 
 ## Installation
 
-### 1. Clone the repository
+### 1. Install the project and dependencies
+
+Pipette uses two separate Conda environments:
+
+- `env_isaaclab`: NVIDIA Isaac Sim 5.1.0 and Isaac Lab 2.3.0
+- `lerobot`: LeRobot with ACT, SmolVLA, and PI0 support
+
+Keeping the simulation and policy environments separate avoids Python and binary dependency conflicts.
+
+#### Clone Pipette
 
 ```bash
 git clone https://github.com/hbhuiyou/Pipette.git
 cd Pipette
 ```
 
-### 2. Prepare the simulation environment
+#### Install Isaac Sim 5.1 and Isaac Lab 2.3
 
-The experiments reported in the accompanying manuscript use:
+Install the simulation environment with Python 3.11:
 
-- NVIDIA Isaac Sim 5.1
-- Isaac Lab 2.3
-- A CUDA-capable GPU
-- Python packages used by the scripts, including `numpy`, `torch`, `h5py`, and `pyzmq`
+```bash
+conda create -y -n env_isaaclab python=3.11
+conda activate env_isaaclab
+python -m pip install --upgrade pip
+pip install "isaacsim[all,extscache]==5.1.0" --extra-index-url https://pypi.nvidia.com
 
-Run simulation-side scripts with the Python environment in which Isaac Lab is available.
+cd ..
+git clone --branch v2.3.0 https://github.com/isaac-sim/IsaacLab.git
+cd IsaacLab
+./isaaclab.sh --install
+cd ../Pipette
 
-### 3. Prepare the LeRobot environment
+pip install h5py
+```
 
-Use a separate LeRobot environment that provides the policy implementations required by this project:
+Install `pyzmq` with the Python interpreter bundled with the official Isaac Sim 5.1 installation:
 
-- `ACTPolicy`
-- `SmolVLAPolicy`
-- `PI0Policy`
-- `LeRobotDataset`
-- `lerobot-train`
+```bash
+cd /path/to/isaac-sim
+./python.sh -m pip install pyzmq
+cd /path/to/Pipette
+```
 
-Keeping Isaac Sim and LeRobot in separate Python environments is recommended. The Agent clears `PYTHONHOME` and `PYTHONPATH` when launching LeRobot commands to avoid binary and standard-library conflicts.
+A CUDA-capable NVIDIA GPU and a compatible NVIDIA driver are required. Run Pipette's collection, replay, augmentation, and evaluation scripts with the Isaac Sim and Isaac Lab environment.
 
-### 4. Configure local paths
+#### Install LeRobot
+
+Create a separate Python 3.12 environment, clone the official LeRobot repository, and install it in editable mode:
+
+```bash
+conda create -y -n lerobot python=3.12
+conda activate lerobot
+python -m pip install --upgrade pip
+
+cd ..
+git clone https://github.com/huggingface/lerobot.git
+cd lerobot
+pip install -e .
+conda install -y -c conda-forge "ffmpeg=6.1.1"
+
+pip install transformers accelerate peft
+pip install num2words
+pip install pyzmq
+cd ../Pipette
+```
+
+Verify the installation:
+
+```bash
+lerobot-train --help
+python -c "from lerobot.policies.act.modeling_act import ACTPolicy; from lerobot.policies.smolvla.modeling_smolvla import SmolVLAPolicy; from lerobot.policies.pi0.modeling_pi0 import PI0Policy; print('LeRobot installation OK')"
+```
+
+The Agent clears `PYTHONHOME` and `PYTHONPATH` when launching LeRobot commands to further prevent environment conflicts.
+
+### 2. Configure local paths
 
 The included task presets use example paths under `/root/gpufree-data`. Update the USD and dataset paths in `Data/task_registry.py`, or register your own scene through the Agent.
 
