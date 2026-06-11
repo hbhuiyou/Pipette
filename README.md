@@ -25,27 +25,6 @@ Pipette currently provides **43 editable wet-lab assets** and an **11-task bench
 - **Unified policy evaluation:** ACT, SmolVLA, and PI0 share the same ZMQ policy interface and Isaac Lab evaluation environment.
 - **Natural-language Agent:** command-line and web agents orchestrate scene construction, task registration, collection, augmentation, training, and evaluation.
 
-## System Overview
-
-```mermaid
-flowchart LR
-    A[Wet-lab USD assets] --> B[Task registry]
-    B --> C[Keyboard or gamepad teleoperation]
-    C --> D[HDF5 demonstrations]
-    D --> E[Simulation replay and augmentation]
-    E --> F[Task success verification]
-    F --> G[LeRobot dataset]
-    G --> H[ACT / SmolVLA / PI0 training]
-    H --> I[ZMQ policy server]
-    B --> J[Isaac Lab evaluation client]
-    I --> J
-    J --> K[Success metrics and failure logs]
-    L[Natural-language Agent] -. orchestrates .-> B
-    L -. orchestrates .-> C
-    L -. orchestrates .-> E
-    L -. orchestrates .-> H
-    L -. orchestrates .-> J
-```
 
 All benchmark tasks use:
 
