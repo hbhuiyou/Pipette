@@ -36,8 +36,6 @@
 | 从培养箱中取出培养皿 | 打开水浴锅盖 | 将移液枪放到移液枪架上 |
 | 将培养皿放入培养箱 | 关闭分光光度计盖 | |
 
-该基准同时考察视觉定位、末端姿态控制、目标区域对齐、接触稳定性和长时状态转换能力。
-
 ## 环境安装
 
 ### 1. 安装项目与依赖
@@ -49,69 +47,56 @@ Pipette 使用两个相互独立的 Conda 环境：
 
 将仿真环境和策略训练环境分开，可以避免 Python 版本和二进制依赖冲突。
 
-#### 克隆 Pipette
-
-```bash
-git clone https://github.com/hbhuiyou/Pipette.git
-cd Pipette
-```
+以下命令面向 Linux x86_64。请先安装 Isaac Sim 和 Isaac Lab，再安装 LeRobot，最后克隆 Pipette。
 
 #### 安装 Isaac Sim 5.1 和 Isaac Lab 2.3
 
-使用 Python 3.11 创建仿真环境：
+Isaac Lab 2.3 提供官方 pip 软件包，可以同时安装 Isaac Lab 组件和 Isaac Sim 5.1：
 
 ```bash
+#安装isaacsim和isaaclab环境
 conda create -y -n env_isaaclab python=3.11
 conda activate env_isaaclab
 python -m pip install --upgrade pip
-pip install "isaacsim[all,extscache]==5.1.0" --extra-index-url https://pypi.nvidia.com
 
-cd ..
-git clone --branch v2.3.0 https://github.com/isaac-sim/IsaacLab.git
-cd IsaacLab
-./isaaclab.sh --install
-cd ../Pipette
-
-pip install h5py
+python -m pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
+python -m pip install "isaaclab[isaacsim,all]==2.3.0" --extra-index-url https://pypi.nvidia.com
+python -m pip install h5py pyzmq
 ```
 
-使用 Isaac Sim 5.1 官方安装目录自带的 Python 安装 `pyzmq`：
-
-```bash
-cd /path/to/isaac-sim
-./python.sh -m pip install pyzmq
-cd /path/to/Pipette
-```
-
-运行仿真需要支持 CUDA 的 NVIDIA GPU 和兼容的显卡驱动。Pipette 的数据采集、回放、增强和评测脚本应使用 Isaac Sim 与 Isaac Lab 环境运行。
 
 #### 安装 LeRobot
 
 使用 Python 3.12 创建独立环境，克隆 LeRobot 官方仓库并以可编辑模式安装：
 
 ```bash
+#安装lerobot环境
 conda create -y -n lerobot python=3.12
 conda activate lerobot
 python -m pip install --upgrade pip
+conda install -c conda-forge "ffmpeg=6.1.1"
 
-cd ..
+# 在准备安装 LeRobot 的目录中执行以下命令。
 git clone https://github.com/huggingface/lerobot.git
 cd lerobot
 pip install -e .
-conda install -y -c conda-forge "ffmpeg=6.1.1"
 
+# Pipette 策略与通信脚本使用的额外依赖。
 pip install transformers accelerate peft
 pip install num2words
 pip install pyzmq
-cd ../Pipette
+pip install h5py
 ```
 
-验证安装：
+#### 安装 Pipette
 
 ```bash
-lerobot-train --help
-python -c "from lerobot.policies.act.modeling_act import ACTPolicy; from lerobot.policies.smolvla.modeling_smolvla import SmolVLAPolicy; from lerobot.policies.pi0.modeling_pi0 import PI0Policy; print('LeRobot installation OK')"
+# 在准备安装 Pipette 的目录中执行以下命令。
+git clone https://github.com/hbhuiyou/Pipette.git
+cd Pipette
 ```
+
+Pipette 放在最后克隆。执行后续命令时请保持终端位于 Pipette 仓库根目录，确保 `Agent/...`、`Data/...` 和 `Server/...` 等相对路径能够正确解析。
 
 Agent 启动 LeRobot 命令时还会清理 `PYTHONHOME` 和 `PYTHONPATH`，进一步避免环境冲突。
 
@@ -173,8 +158,6 @@ python Data/Keyboard_collection.py \
 - `SPACE`：跳过当前 demo
 - `P`：结束采集
 
-手柄采集入口位于 `Data/Gamepad_collection.py`。
-
 ### 2. 检查数据
 
 ```bash
@@ -193,7 +176,7 @@ python Data/Generate_data.py \
   --num_envs 3 \
   --light_intensity_scales 0.8 \
   --temporal_speed_scales 1.2 \
-  --camera_jitter_count 1 \
+  --camera_jitter_count 5 \
   --include_original \
   --headless
 ```
@@ -222,7 +205,23 @@ python Data/hdf5_to_lerobot.py \
 
 转换后的数据包含三路 RGB 图像、8 维机器人状态、8 维动作和语言指令。转换器会过滤视觉观测未及时更新的帧，以保持观测与动作的时序对齐。
 
-## 策略训练
+## 训练
+
+初次训练时，可以先在 LeRobot 环境中使用单个数据集运行 SmolVLA：
+
+```bash
+# 在Lerobot的目录下运行
+lerobot-train \
+  --dataset.repo_id=/path/to/lerobot/datasets/pick_tube \
+  --policy.type=smolvla \
+  --policy.repo_id=local/smolvla_pick_tube \
+  --output_dir=/path/to/checkpoints/pick_tube_smolvla \
+  --batch_size=8 \
+  --steps=20000 \
+  --wandb.enable=false
+```
+
+请将数据集和模型输出路径替换为实际的绝对路径。该示例仅训练 `pick_tube` 单个任务，适合在运行批量训练前验证数据集、显存和训练环境。
 
 批量训练脚本支持 ACT、SmolVLA 和 PI0：
 
@@ -248,7 +247,7 @@ python run_lerobot_batch_train.py --model pi0 --dataset-version raw --dry-run
 | SmolVLA | 8 | 20,000 | 默认精度 |
 | PI0 | 4 | 20,000 | BF16、冻结视觉编码器、仅训练专家模块、梯度检查点 |
 
-## 闭环评测
+## 评估
 
 评测系统由 LeRobot 策略服务端和 Isaac Lab 客户端组成，二者通过 ZMQ 通信。
 

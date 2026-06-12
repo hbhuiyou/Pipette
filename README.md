@@ -38,8 +38,6 @@
 | Remove the petri dish from the incubator | Open the water bath lid | Place the pipette on the pipette stand |
 | Place the petri dish in the incubator | Close the spectrophotometer lid | |
 
-The benchmark covers sample handling, cultureware manipulation, equipment operation, and precision placement.
-
 ## Installation
 
 ### 1. Install the project and dependencies
@@ -49,71 +47,57 @@ Pipette uses two separate Conda environments:
 - `env_isaaclab`: NVIDIA Isaac Sim 5.1.0 and Isaac Lab 2.3.0
 - `lerobot`: LeRobot with ACT, SmolVLA, and PI0 support
 
-Keeping the simulation and policy environments separate avoids Python and binary dependency conflicts.
+Keeping the simulation and policy environments separate avoids Python dependency conflicts.
 
-#### Clone Pipette
-
-```bash
-git clone https://github.com/hbhuiyou/Pipette.git
-cd Pipette
-```
+The following commands target Linux x86_64. Install Isaac Sim and Isaac Lab first, then LeRobot, and clone Pipette last.
 
 #### Install Isaac Sim 5.1 and Isaac Lab 2.3
 
-Install the simulation environment with Python 3.11:
+Isaac Lab 2.3 provides an official pip package that installs the Isaac Lab packages together with Isaac Sim 5.1:
 
 ```bash
+# Install the Isaac Sim and Isaac Lab environment.
 conda create -y -n env_isaaclab python=3.11
 conda activate env_isaaclab
 python -m pip install --upgrade pip
-pip install "isaacsim[all,extscache]==5.1.0" --extra-index-url https://pypi.nvidia.com
 
-cd ..
-git clone --branch v2.3.0 https://github.com/isaac-sim/IsaacLab.git
-cd IsaacLab
-./isaaclab.sh --install
-cd ../Pipette
-
-pip install h5py
+python -m pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
+python -m pip install "isaaclab[isaacsim,all]==2.3.0" --extra-index-url https://pypi.nvidia.com
+python -m pip install h5py pyzmq
 ```
-
-Install `pyzmq` with the Python interpreter bundled with the official Isaac Sim 5.1 installation:
-
-```bash
-cd /path/to/isaac-sim
-./python.sh -m pip install pyzmq
-cd /path/to/Pipette
-```
-
-A CUDA-capable NVIDIA GPU and a compatible NVIDIA driver are required. Run Pipette's collection, replay, augmentation, and evaluation scripts with the Isaac Sim and Isaac Lab environment.
 
 #### Install LeRobot
 
 Create a separate Python 3.12 environment, clone the official LeRobot repository, and install it in editable mode:
 
 ```bash
+# Install the LeRobot environment.
 conda create -y -n lerobot python=3.12
 conda activate lerobot
 python -m pip install --upgrade pip
+conda install -c conda-forge "ffmpeg=6.1.1"
 
-cd ..
+# Run the following commands in the directory where LeRobot will be installed.
 git clone https://github.com/huggingface/lerobot.git
 cd lerobot
 pip install -e .
-conda install -y -c conda-forge "ffmpeg=6.1.1"
 
+# Additional dependencies used by Pipette's policy and communication scripts.
 pip install transformers accelerate peft
 pip install num2words
 pip install pyzmq
-cd ../Pipette
+pip install h5py
 ```
 
-Verify the installation:
+#### Install Pipette
 
 ```bash
-lerobot-train --help
-python -c "from lerobot.policies.act.modeling_act import ACTPolicy; from lerobot.policies.smolvla.modeling_smolvla import SmolVLAPolicy; from lerobot.policies.pi0.modeling_pi0 import PI0Policy; print('LeRobot installation OK')"
+# Run the following commands in the directory where Pipette will be installed.
+git clone https://github.com/hbhuiyou/Pipette.git
+cd Pipette
 ```
+
+Pipette is cloned last. Keep the terminal in the Pipette repository root when running the following commands so that relative paths such as `Agent/...`, `Data/...`, and `Server/...` resolve correctly.
 
 The Agent clears `PYTHONHOME` and `PYTHONPATH` when launching LeRobot commands to further prevent environment conflicts.
 
@@ -175,8 +159,6 @@ Keyboard controls:
 - `SPACE`: skip the current demonstration
 - `P`: stop collection
 
-Gamepad collection is implemented in `Data/Gamepad_collection.py`.
-
 ### 2. Inspect dataset
 
 ```bash
@@ -225,6 +207,22 @@ python Data/hdf5_to_lerobot.py \
 The converter writes three RGB features, an 8-dimensional state, an 8-dimensional action, and the language instruction. Frames without a fresh visual observation are filtered to preserve temporal alignment.
 
 ## Policy Training
+
+For an initial training run, use a single dataset to train SmolVLA in the LeRobot environment:
+
+```bash
+# Run from the LeRobot directory.
+lerobot-train \
+  --dataset.repo_id=/path/to/lerobot/datasets/pick_tube \
+  --policy.type=smolvla \
+  --policy.repo_id=local/smolvla_pick_tube \
+  --output_dir=/path/to/checkpoints/pick_tube_smolvla \
+  --batch_size=8 \
+  --steps=20000 \
+  --wandb.enable=false
+```
+
+Replace the dataset and model output paths with actual absolute paths. This example trains only the `pick_tube` task and is useful for validating the dataset, GPU memory, and training environment before batch training.
 
 The batch entry point supports ACT, SmolVLA, and PI0:
 
@@ -306,4 +304,4 @@ Each episode records success or failure, failure reason, runtime, policy and con
 
 ## Acknowledgements
 
-Pipette builds on [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim), [Isaac Lab](https://isaac-sim.github.io/IsaacLab/), and [LeRobot](https://github.com/huggingface/lerobot). 
+Pipette builds on [NVIDIA Isaac Sim](https://developer.nvidia.com/isaac-sim), [Isaac Lab](https://isaac-sim.github.io/IsaacLab/), and [LeRobot](https://github.com/huggingface/lerobot).
