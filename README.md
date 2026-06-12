@@ -31,6 +31,29 @@
 
 ## Benchmark Tasks
 
+### Example Videos
+
+<table>
+  <tr>
+    <td align="center"><img src="./docs/gif/Pick%20up%20the%20test%20tube.gif" alt="Pick up the test tube" width="100%"><br><sub>Pick up the test tube</sub></td>
+    <td align="center"><img src="./docs/gif/Position%20the%20pipette%20over%20the%20petri%20dish.gif" alt="Position the pipette over the petri dish" width="100%"><br><sub>Position the pipette over the petri dish</sub></td>
+    <td align="center"><img src="./docs/gif/Remove%20the%20petri%20dish%20from%20the%20incubator.gif" alt="Remove the petri dish from the incubator" width="100%"><br><sub>Remove the petri dish from the incubator</sub></td>
+    <td align="center"><img src="./docs/gif/Place%20the%20petri%20dish%20in%20the%20incubator.gif" alt="Place the petri dish in the incubator" width="100%"><br><sub>Place the petri dish in the incubator</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/gif/Close%20the%20centrifuge%20lid.gif" alt="Close the centrifuge lid" width="100%"><br><sub>Close the centrifuge lid</sub></td>
+    <td align="center"><img src="./docs/gif/Open%20the%20centrifuge%20lid.gif" alt="Open the centrifuge lid" width="100%"><br><sub>Open the centrifuge lid</sub></td>
+    <td align="center"><img src="./docs/gif/Open%20the%20water%20bath%20lid.gif" alt="Open the water bath lid" width="100%"><br><sub>Open the water bath lid</sub></td>
+    <td align="center"><img src="./docs/gif/Close%20the%20spectrophotometer%20lid.gif" alt="Close the spectrophotometer lid" width="100%"><br><sub>Close the spectrophotometer lid</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/gif/Place%20the%20centrifuge%20tube%20on%20the%20balance.gif" alt="Place the centrifuge tube on the balance" width="100%"><br><sub>Place the centrifuge tube on the balance</sub></td>
+    <td align="center"><img src="./docs/gif/Remove%20the%20centrifuge%20tube%20from%20the%20balance.gif" alt="Remove the centrifuge tube from the balance" width="100%"><br><sub>Remove the centrifuge tube from the balance</sub></td>
+    <td align="center"><img src="./docs/gif/Place%20the%20pipette%20on%20the%20pipette%20stand.gif" alt="Place the pipette on the pipette stand" width="100%"><br><sub>Place the pipette on the pipette stand</sub></td>
+    <td></td>
+  </tr>
+</table>
+
 | Sample and Cultureware | Equipment Operation | Placement and Relocation |
 |---|---|---|
 | Pick up the test tube | Close the centrifuge lid | Place the centrifuge tube on the balance |

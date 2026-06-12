@@ -29,6 +29,29 @@
 
 ## 基准任务
 
+### 示例视频
+
+<table>
+  <tr>
+    <td align="center"><img src="./docs/gif/Pick%20up%20the%20test%20tube.gif" alt="拿起试管" width="100%"><br><sub>拿起试管</sub></td>
+    <td align="center"><img src="./docs/gif/Position%20the%20pipette%20over%20the%20petri%20dish.gif" alt="将移液枪定位到培养皿上方" width="100%"><br><sub>将移液枪定位到培养皿上方</sub></td>
+    <td align="center"><img src="./docs/gif/Remove%20the%20petri%20dish%20from%20the%20incubator.gif" alt="从培养箱中取出培养皿" width="100%"><br><sub>从培养箱中取出培养皿</sub></td>
+    <td align="center"><img src="./docs/gif/Place%20the%20petri%20dish%20in%20the%20incubator.gif" alt="将培养皿放入培养箱" width="100%"><br><sub>将培养皿放入培养箱</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/gif/Close%20the%20centrifuge%20lid.gif" alt="关闭离心机盖" width="100%"><br><sub>关闭离心机盖</sub></td>
+    <td align="center"><img src="./docs/gif/Open%20the%20centrifuge%20lid.gif" alt="打开离心机盖" width="100%"><br><sub>打开离心机盖</sub></td>
+    <td align="center"><img src="./docs/gif/Open%20the%20water%20bath%20lid.gif" alt="打开水浴锅盖" width="100%"><br><sub>打开水浴锅盖</sub></td>
+    <td align="center"><img src="./docs/gif/Close%20the%20spectrophotometer%20lid.gif" alt="关闭分光光度计盖" width="100%"><br><sub>关闭分光光度计盖</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/gif/Place%20the%20centrifuge%20tube%20on%20the%20balance.gif" alt="将离心管放到电子天平上" width="100%"><br><sub>将离心管放到电子天平上</sub></td>
+    <td align="center"><img src="./docs/gif/Remove%20the%20centrifuge%20tube%20from%20the%20balance.gif" alt="从电子天平取下离心管" width="100%"><br><sub>从电子天平取下离心管</sub></td>
+    <td align="center"><img src="./docs/gif/Place%20the%20pipette%20on%20the%20pipette%20stand.gif" alt="将移液枪放到移液枪架上" width="100%"><br><sub>将移液枪放到移液枪架上</sub></td>
+    <td></td>
+  </tr>
+</table>
+
 | 样品与培养耗材 | 设备开合操作 | 仪器放置与转移 |
 |---|---|---|
 | 拿起试管 | 关闭离心机盖 | 将离心管放到电子天平上 |
