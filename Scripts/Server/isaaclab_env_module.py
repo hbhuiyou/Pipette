@@ -1,7 +1,19 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
+
+
+PIPETTE_ROOT = Path(__file__).resolve().parents[2]
+
+
+def resolve_task_usd_path(path_text: str) -> Path:
+	path = Path(path_text).expanduser()
+	resolved = path if path.is_absolute() else (PIPETTE_ROOT / path).resolve()
+	if not resolved.is_file():
+		raise FileNotFoundError(f"Task USD scene not found: {resolved}")
+	return resolved
 
 
 @dataclass
@@ -156,8 +168,9 @@ def create_franka_simulation_session(
 		task_preset,
 		enable_sensor_capture=enable_sensor_capture,
 	)
+	task_usd_path = resolve_task_usd_path(task_preset.usd_path)
 	env_cfg = EnvironmentModuleConfig(
-		usd_path=task_preset.usd_path,
+		usd_path=str(task_usd_path),
 		camera_width=max(32, int(camera_width if camera_width is not None else task_preset.camera_width)),
 		camera_height=max(32, int(camera_height if camera_height is not None else task_preset.camera_height)),
 		camera_sensor_type=str(camera_sensor_type if camera_sensor_type is not None else task_preset.camera_sensor_type),
