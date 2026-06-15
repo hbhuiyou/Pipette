@@ -257,7 +257,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     DEFAULT_TASK_ID: make_task(
         task_id=DEFAULT_TASK_ID,
         description="Keyboard teleoperation data collection for tube pickup task.",
-        usd_path="/root/gpufree-data/asset/lab_0.usd",
+        usd_path="Asset/Scene/lab_0.usd",
         dataset_file="./datasets/pick_up_the_tube.hdf5",
         language_instruction="pick_up_the_tube",
         tube_prim_path="/World/Tube/Xform",
@@ -273,7 +273,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     PICK_UP_PIPETTE_TASK_ID: make_task(
         task_id=PICK_UP_PIPETTE_TASK_ID,
         description="Keyboard teleoperation data collection for pipette pickup task.",
-        usd_path="/root/gpufree-data/asset/lab_1.usd",
+        usd_path="Asset/Scene/lab_1.usd",
         dataset_file="./datasets/pick_up_the_pipette.hdf5",
         language_instruction="pick_up_the_pipette",
         pipette_prim_path="/World/Pipette",
@@ -287,7 +287,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     OPEN_CENTRIFUGE_LID_TASK_ID: make_task(
         task_id=OPEN_CENTRIFUGE_LID_TASK_ID,
         description="Keyboard teleoperation data collection for centrifuge lid opening task.",
-        usd_path="/root/gpufree-data/asset/lab_2.usd",
+        usd_path="Asset/Scene/lab_2.usd",
         dataset_file="./datasets/open_the_centrifuge_lid.hdf5",
         language_instruction="open_the_centrifuge_lid",
         centrifuge_eval=CentrifugeEvalConfig(
@@ -302,7 +302,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     CLOSE_CENTRIFUGE_LID_TASK_ID: make_task(
         task_id=CLOSE_CENTRIFUGE_LID_TASK_ID,
         description="Keyboard teleoperation data collection for centrifuge lid closing task.",
-        usd_path="/root/gpufree-data/asset/lab_3.usd",
+        usd_path="Asset/Scene/lab_3.usd",
         dataset_file="./datasets/close_the_centrifuge_lid.hdf5",
         language_instruction="close_the_centrifuge_lid",
         centrifuge_eval=CentrifugeEvalConfig(
@@ -316,7 +316,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     TAKE_OUT_PETRI_DISH_TASK_ID: make_task(
         task_id=TAKE_OUT_PETRI_DISH_TASK_ID,
         description="Keyboard teleoperation data collection for petri dish take-out task.",
-        usd_path="/root/gpufree-data/asset/lab_4.usd",
+        usd_path="Asset/Scene/lab_4.usd",
         dataset_file="./datasets/take_out_the_petri_dish.hdf5",
         language_instruction="take_out_the_petri_dish",
         petri_close_prim_path="/World/Petri_close",
@@ -328,7 +328,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     PLACE_PETRI_DISH_TASK_ID: make_task(
         task_id=PLACE_PETRI_DISH_TASK_ID,
         description="Keyboard teleoperation data collection for petri dish placement task.",
-        usd_path="/root/gpufree-data/asset/lab_5.usd",
+        usd_path="Asset/Scene/lab_5.usd",
         dataset_file="./datasets/place_the_petri_dish.hdf5",
         language_instruction="place_the_petri_dish",
         petri_close_prim_path="/World/Petri_close",
@@ -342,7 +342,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     PLACE_CENTRIFUGE_TUBE_ON_BALANCE_TASK_ID: make_task(
         task_id=PLACE_CENTRIFUGE_TUBE_ON_BALANCE_TASK_ID,
         description="Keyboard teleoperation data collection for placing a centrifuge tube on an electronic balance.",
-        usd_path="/root/gpufree-data/asset/lab_6.usd",
+        usd_path="Asset/Scene/lab_6.usd",
         dataset_file="./datasets/place_the_centrifuge_tube_on_the_balance.hdf5",
         language_instruction="place_the_centrifuge_tube_on_the_balance",
         tube_prim_path="/World/Centrifuge_tube",
@@ -358,7 +358,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     PLACE_PIPETTE_ON_PIPETTE_STAND_TASK_ID: make_task(
         task_id=PLACE_PIPETTE_ON_PIPETTE_STAND_TASK_ID,
         description="Keyboard teleoperation data collection for placing a pipette on a pipette stand.",
-        usd_path="/root/gpufree-data/asset/lab_7.usd",
+        usd_path="Asset/Scene/lab_7.usd",
         dataset_file="./datasets/place_the_pipette_on_the_pipette_stand.hdf5",
         language_instruction="place_the_pipette_on_the_pipette_stand",
         pipette_prim_path="/World/Pipette",
@@ -378,7 +378,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     TAKE_CENTRIFUGE_TUBE_FROM_BALANCE_TASK_ID: make_task(
         task_id=TAKE_CENTRIFUGE_TUBE_FROM_BALANCE_TASK_ID,
         description="Keyboard teleoperation data collection for taking a centrifuge tube away from an electronic balance.",
-        usd_path="/root/gpufree-data/asset/lab_8.usd",
+        usd_path="Asset/Scene/lab_8.usd",
         dataset_file="./datasets/take_the_centrifuge_tube_from_the_balance.hdf5",
         language_instruction="take_the_centrifuge_tube_from_the_balance",
         tube_prim_path="/World/Centrifuge_tube",
@@ -396,7 +396,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     OPEN_WATER_BATH_LID_TASK_ID: make_task(
         task_id=OPEN_WATER_BATH_LID_TASK_ID,
         description="Keyboard teleoperation data collection for opening the water bath lid.",
-        usd_path="/root/gpufree-data/asset/lab_9.usd",
+        usd_path="Asset/Scene/lab_9.usd",
         dataset_file="./datasets/open_the_water_bath_lid.hdf5",
         language_instruction="open_the_water_bath_lid",
         water_bath_lid_eval=WaterBathLidEvalConfig(
@@ -410,7 +410,7 @@ TASK_PRESETS: dict[str, TaskPreset] = {
     CLOSE_SPECTROPHOTOMETER_TASK_ID: make_task(
         task_id=CLOSE_SPECTROPHOTOMETER_TASK_ID,
         description="Keyboard teleoperation data collection for closing the spectrophotometer.",
-        usd_path="/root/gpufree-data/asset/lab_10.usd",
+        usd_path="Asset/Scene/lab_10.usd",
         dataset_file="./datasets/close_the_spectrophotometer.hdf5",
         language_instruction="close_the_spectrophotometer",
         centrifuge_eval=CentrifugeEvalConfig(
