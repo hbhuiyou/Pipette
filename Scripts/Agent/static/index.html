@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Completed Script Agent</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="nav">
+      <div class="brand" data-i18n="brand">Smart Assistant</div>
+      <div class="nav-list" id="navList"></div>
+    </aside>
+    <main>
+      <section class="hero">
+        <button id="langToggle" class="language-toggle" type="button" title="切换到中文" aria-label="切换到中文">中文</button>
+        <h1 data-i18n="heroTitle">Hello, welcome to Pipette Platform Agent!</h1>
+        <p data-i18n="heroIntro">Describe what you want to do, and the system will complete the parameters on this page before opening the required terminal to run the script.</p>
+        <p data-i18n="heroFlow">Common workflows: build environment, register task, collect data, augment data, convert LeRobot, train model, and run inference.</p>
+      </section>
+      <section class="workspace" id="workspace"></section>
+    </main>
+  </div>
+  <div class="inputbar">
+    <input id="chatInput" placeholder="Enter your question, for example: I want to collect data" />
+    <button id="sendBtn" title="Send"><span class="send-arrow">↑</span></button>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
