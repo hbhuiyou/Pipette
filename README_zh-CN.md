@@ -5,7 +5,7 @@
 [English](README.md) | [简体中文](README_zh-CN.md)
 
 [![Isaac Sim](https://img.shields.io/badge/Isaac%20Sim-5.1-76B900)](https://developer.nvidia.com/isaac-sim)
-[![Isaac Lab](https://img.shields.io/badge/Isaac%20Lab-2.3-76B900)](https://isaac-sim.github.io/IsaacLab/)
+[![Isaac Lab](https://img.shields.io/badge/Isaac%20Lab-2.3.2-76B900)](https://isaac-sim.github.io/IsaacLab/)
 [![LeRobot](https://img.shields.io/badge/LeRobot-ACT%20%7C%20SmolVLA%20%7C%20PI0-yellow)](https://github.com/huggingface/lerobot)
 [![Python](https://img.shields.io/badge/Python-3.x-blue)](https://www.python.org/)
 
@@ -65,16 +65,16 @@
 
 Pipette 使用两个相互独立的 Conda 环境：
 
-- `env_isaaclab`：安装 NVIDIA Isaac Sim 5.1.0 和 Isaac Lab 2.3.0
+- `env_isaaclab`：安装 NVIDIA Isaac Sim 5.1.0 和 Isaac Lab 2.3.2
 - `lerobot`：安装支持 ACT、SmolVLA 和 PI0 的 LeRobot
 
 将仿真环境和策略训练环境分开，可以避免 Python 版本和二进制依赖冲突。
 
 以下命令面向 Linux x86_64。请先安装 Isaac Sim 和 Isaac Lab，再安装 LeRobot，最后克隆 Pipette。
 
-#### 安装 Isaac Sim 5.1 和 Isaac Lab 2.3
+#### 安装 Isaac Sim 5.1 和 Isaac Lab 2.3.2
 
-Isaac Lab 2.3 提供官方 pip 软件包，可以同时安装 Isaac Lab 组件和 Isaac Sim 5.1：
+Isaac Lab 2.3.2 提供官方 pip 软件包，可以同时安装 Isaac Lab 组件和 Isaac Sim 5.1：
 
 ```bash
 #安装isaacsim和isaaclab环境
@@ -83,7 +83,7 @@ conda activate env_isaaclab
 python -m pip install --upgrade pip
 
 python -m pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
-python -m pip install "isaaclab[isaacsim,all]==2.3.0" --extra-index-url https://pypi.nvidia.com
+python -m pip install "isaaclab[isaacsim,all]==2.3.2" --extra-index-url https://pypi.nvidia.com
 python -m pip install h5py pyzmq
 ```
 
@@ -119,37 +119,37 @@ git clone https://github.com/hbhuiyou/Pipette.git
 cd Pipette
 ```
 
-Pipette 放在最后克隆。执行后续命令时请保持终端位于 Pipette 仓库根目录，确保 `Agent/...`、`Data/...` 和 `Server/...` 等相对路径能够正确解析。
+执行后续命令时请保持终端位于 Pipette 仓库根目录，确保 `Scripts/...`、`Asset/...`、`datasets/...` 和 `models/...` 等路径能够统一解析。
 
 Agent 启动 LeRobot 命令时还会清理 `PYTHONHOME` 和 `PYTHONPATH`，进一步避免环境冲突。
 
 ### 2. 配置本地路径
 
-仓库中的任务预设使用 `/root/gpufree-data` 下的示例路径。请根据实际环境修改 `Data/task_registry.py` 中的 USD 和数据集路径，也可以通过 Agent 注册新场景。
+仓库中的任务预设使用 `Asset/Scene/lab_0.usd` 等相对于 Pipette 根目录的 USD 路径，运行时会自动从仓库根目录解析。
 
 复制本地配置模板：
 
 ```bash
-cp Agent/local_config.example.env Agent/local_config.env
+cp Scripts/Agent/local_config.example.env Scripts/Agent/local_config.env
 ```
 
 填写实际路径：
 
 ```text
 LEROBOT_PYTHON="/path/to/lerobot/python"
-LEROBOT_MODEL_ROOT="/path/to/models"
-AGENT_ENV_TEMPLATE_USD="/path/to/lab.usd"
-AGENT_ASSET_DIR="/path/to/assets"
+LEROBOT_MODEL_ROOT="models"
+AGENT_ENV_TEMPLATE_USD="Asset/lab.usd"
+AGENT_ASSET_DIR="Asset"
 ```
 
-请勿将包含 API Key 或云服务密钥的 `Agent/local_config.env` 提交到公开仓库。
+请勿将包含 API Key 或云服务密钥的 `Scripts/Agent/local_config.env` 提交到公开仓库。
 
 ## 快速开始
 
 ### 自然语言网页入口
 
 ```bash
-python Agent/web_agent.py
+python Scripts/Agent/web_agent.py
 ```
 
 打开 [http://127.0.0.1:7860](http://127.0.0.1:7860)，然后输入：
@@ -162,14 +162,14 @@ python Agent/web_agent.py
 用 PI0 运行推理评估
 ```
 
-Agent 的接口配置、网页控制和腾讯混元生 3D 资产生成功能请参阅 [`Agent/README.md`](Agent/README.md)。
+Agent 的接口配置、网页控制和腾讯混元生 3D 资产生成功能请参阅 [`Scripts/Agent/README.md`](Scripts/Agent/README.md)。
 
 ## 数据流程
 
 ### 1. 采集示教数据
 
 ```bash
-python Data/Keyboard_collection.py \
+python Scripts/Data/Keyboard_collection.py \
   --task_id pick_up_the_tube \
   --num_demos 30 \
   --dataset_file ./datasets/pick_up_the_tube.hdf5
@@ -184,7 +184,7 @@ python Data/Keyboard_collection.py \
 ### 2. 检查数据
 
 ```bash
-python Data/inspect_hdf5_dataset.py \
+python Scripts/Data/inspect_hdf5_dataset.py \
   --file ./datasets/pick_up_the_tube.hdf5 \
   --show-attrs
 ```
@@ -192,7 +192,7 @@ python Data/inspect_hdf5_dataset.py \
 ### 3. 生成仿真增强数据
 
 ```bash
-python Data/Generate_data.py \
+python Scripts/Data/Generate_data.py \
   --task_id pick_up_the_tube \
   --dataset_file ./datasets/pick_up_the_tube.hdf5 \
   --output_file ./datasets/pick_up_the_tube_aug.hdf5 \
@@ -217,7 +217,7 @@ python Data/Generate_data.py \
 在 LeRobot 环境中运行：
 
 ```bash
-python Data/hdf5_to_lerobot.py \
+python Scripts/Data/hdf5_to_lerobot.py \
   --hdf5-path ./datasets/pick_up_the_tube_aug.hdf5 \
   --repo-id pick_up_the_tube \
   --output-dir /absolute/path/to/lerobot/pick_up_the_tube \
@@ -249,7 +249,7 @@ lerobot-train \
 批量训练脚本支持 ACT、SmolVLA 和 PI0：
 
 ```bash
-python run_lerobot_batch_train.py \
+python Scripts/run_lerobot_batch_train.py \
   --model smolvla \
   --dataset-version aug \
   --dataset-root /path/to/lerobot/datasets \
@@ -259,7 +259,7 @@ python run_lerobot_batch_train.py \
 正式训练前可使用 `--dry-run` 检查生成的命令：
 
 ```bash
-python run_lerobot_batch_train.py --model pi0 --dataset-version raw --dry-run
+python Scripts/run_lerobot_batch_train.py --model pi0 --dataset-version raw --dry-run
 ```
 
 论文使用的训练配置如下：
@@ -277,7 +277,7 @@ python run_lerobot_batch_train.py --model pi0 --dataset-version raw --dry-run
 在 LeRobot 环境中启动策略服务：
 
 ```bash
-python Server/server_brain.py \
+python Scripts/Server/server_brain.py \
   --policy-path /path/to/checkpoint \
   --policy-type smolvla \
   --bind tcp://127.0.0.1:5555 \
@@ -287,7 +287,7 @@ python Server/server_brain.py \
 启动对应的 Isaac Lab 客户端：
 
 ```bash
-python Client/inference_smolvla.py \
+python Scripts/Client/inference_smolvla.py \
   --task-id pick_up_the_tube \
   --server-endpoint tcp://127.0.0.1:5555 \
   --episodes 100 \
@@ -296,9 +296,9 @@ python Client/inference_smolvla.py \
 
 当前提供以下客户端：
 
-- `Client/inference_act.py`
-- `Client/inference_smolvla.py`
-- `Client/inference_pi0.py`
+- `Scripts/Client/inference_act.py`
+- `Scripts/Client/inference_smolvla.py`
+- `Scripts/Client/inference_pi0.py`
 
 每个 episode 会记录成功或失败、失败原因、运行时间、策略频率、控制频率和任务评估指标。
 
@@ -306,11 +306,13 @@ python Client/inference_smolvla.py \
 
 ```text
 .
-|-- Agent/                  # 自然语言命令行与网页调度
-|-- Client/                 # Isaac Lab 策略评测客户端
-|-- Data/                   # 采集、回放、增强、转换和成功评估
-|-- Server/                 # 统一 LeRobot ZMQ 推理服务
-|-- run_lerobot_batch_train.py
+|-- Asset/                  # 生成及用户提供的 USD 资产
+|-- Scripts/
+|   |-- Agent/             # 自然语言命令行与网页调度
+|   |-- Client/            # Isaac Lab 策略评测客户端
+|   |-- Data/              # 采集、回放、增强、转换和成功评估
+|   |-- Server/            # 统一 LeRobot ZMQ 推理服务
+|   `-- run_lerobot_batch_train.py
 `-- README.md
 ```
 

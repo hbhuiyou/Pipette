@@ -5,7 +5,7 @@
 [English](README.md) | [简体中文](README_zh-CN.md)
 
 [![Isaac Sim](https://img.shields.io/badge/Isaac%20Sim-5.1-76B900)](https://developer.nvidia.com/isaac-sim)
-[![Isaac Lab](https://img.shields.io/badge/Isaac%20Lab-2.3-76B900)](https://isaac-sim.github.io/IsaacLab/)
+[![Isaac Lab](https://img.shields.io/badge/Isaac%20Lab-2.3.2-76B900)](https://isaac-sim.github.io/IsaacLab/)
 [![LeRobot](https://img.shields.io/badge/LeRobot-ACT%20%7C%20SmolVLA%20%7C%20PI0-yellow)](https://github.com/huggingface/lerobot)
 [![Python](https://img.shields.io/badge/Python-3.x-blue)](https://www.python.org/)
 
@@ -67,16 +67,16 @@
 
 Pipette uses two separate Conda environments:
 
-- `env_isaaclab`: NVIDIA Isaac Sim 5.1.0 and Isaac Lab 2.3.0
+- `env_isaaclab`: NVIDIA Isaac Sim 5.1.0 and Isaac Lab 2.3.2
 - `lerobot`: LeRobot with ACT, SmolVLA, and PI0 support
 
 Keeping the simulation and policy environments separate avoids Python dependency conflicts.
 
 The following commands target Linux x86_64. Install Isaac Sim and Isaac Lab first, then LeRobot, and clone Pipette last.
 
-#### Install Isaac Sim 5.1 and Isaac Lab 2.3
+#### Install Isaac Sim 5.1 and Isaac Lab 2.3.2
 
-Isaac Lab 2.3 provides an official pip package that installs the Isaac Lab packages together with Isaac Sim 5.1:
+Isaac Lab 2.3.2 provides an official pip package that installs the Isaac Lab packages together with Isaac Sim 5.1:
 
 ```bash
 # Install the Isaac Sim and Isaac Lab environment.
@@ -85,7 +85,7 @@ conda activate env_isaaclab
 python -m pip install --upgrade pip
 
 python -m pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
-python -m pip install "isaaclab[isaacsim,all]==2.3.0" --extra-index-url https://pypi.nvidia.com
+python -m pip install "isaaclab[isaacsim,all]==2.3.2" --extra-index-url https://pypi.nvidia.com
 python -m pip install h5py pyzmq
 ```
 
@@ -120,37 +120,37 @@ git clone https://github.com/hbhuiyou/Pipette.git
 cd Pipette
 ```
 
-Pipette is cloned last. Keep the terminal in the Pipette repository root when running the following commands so that relative paths such as `Agent/...`, `Data/...`, and `Server/...` resolve correctly.
+Keep the terminal in the Pipette repository root when running the following commands so that paths under `Scripts/...`, `Asset/...`, `datasets/...`, and `models/...` resolve consistently.
 
 The Agent clears `PYTHONHOME` and `PYTHONPATH` when launching LeRobot commands to further prevent environment conflicts.
 
 ### 2. Configure local paths
 
-The included task presets use example paths under `/root/gpufree-data`. Update the USD and dataset paths in `Data/task_registry.py`, or register your own scene through the Agent.
+The included task presets use repository-relative USD paths such as `Asset/Scene/lab_0.usd`. Runtime loading resolves them from the Pipette repository root.
 
 For Agent-managed execution:
 
 ```bash
-cp Agent/local_config.example.env Agent/local_config.env
+cp Scripts/Agent/local_config.example.env Scripts/Agent/local_config.env
 ```
 
 Then configure the relevant values:
 
 ```text
 LEROBOT_PYTHON="/path/to/lerobot/python"
-LEROBOT_MODEL_ROOT="/path/to/models"
-AGENT_ENV_TEMPLATE_USD="/path/to/lab.usd"
-AGENT_ASSET_DIR="/path/to/assets"
+LEROBOT_MODEL_ROOT="models"
+AGENT_ENV_TEMPLATE_USD="Asset/lab.usd"
+AGENT_ASSET_DIR="Asset"
 ```
 
-Do not commit API keys or cloud credentials stored in `Agent/local_config.env`.
+Do not commit API keys or cloud credentials stored in `Scripts/Agent/local_config.env`.
 
 ## Quick Start
 
 ### Natural-language web interface
 
 ```bash
-python Agent/web_agent.py
+python Scripts/Agent/web_agent.py
 ```
 
 Open [http://127.0.0.1:7860](http://127.0.0.1:7860), then enter instructions such as:
@@ -163,14 +163,14 @@ Open [http://127.0.0.1:7860](http://127.0.0.1:7860), then enter instructions suc
 用 PI0 运行推理评估
 ```
 
-See [`Agent/README.md`](Agent/README.md) for Agent configuration, OpenAI-compatible intent parsing, web controls, and optional Tencent Hunyuan3D asset generation.
+See [`Scripts/Agent/README.md`](Scripts/Agent/README.md) for Agent configuration, OpenAI-compatible intent parsing, web controls, and optional Tencent Hunyuan3D asset generation.
 
 ## Data Pipeline
 
 ### 1. Collect demonstrations
 
 ```bash
-python Data/Keyboard_collection.py \
+python Scripts/Data/Keyboard_collection.py \
   --task_id pick_up_the_tube \
   --num_demos 30 \
   --dataset_file ./datasets/pick_up_the_tube.hdf5
@@ -185,7 +185,7 @@ Keyboard controls:
 ### 2. Inspect dataset
 
 ```bash
-python Data/inspect_hdf5_dataset.py \
+python Scripts/Data/inspect_hdf5_dataset.py \
   --file ./datasets/pick_up_the_tube.hdf5 \
   --show-attrs
 ```
@@ -193,7 +193,7 @@ python Data/inspect_hdf5_dataset.py \
 ### 3. Generate simulation-augmented data
 
 ```bash
-python Data/Generate_data.py \
+python Scripts/Data/Generate_data.py \
   --task_id pick_up_the_tube \
   --dataset_file ./datasets/pick_up_the_tube.hdf5 \
   --output_file ./datasets/pick_up_the_tube_aug.hdf5 \
@@ -218,7 +218,7 @@ The augmentation workers re-execute trajectories and regenerate observations ins
 Run this command in the LeRobot environment:
 
 ```bash
-python Data/hdf5_to_lerobot.py \
+python Scripts/Data/hdf5_to_lerobot.py \
   --hdf5-path ./datasets/pick_up_the_tube_aug.hdf5 \
   --repo-id pick_up_the_tube \
   --output-dir /absolute/path/to/lerobot/pick_up_the_tube \
@@ -250,7 +250,7 @@ Replace the dataset and model output paths with actual absolute paths. This exam
 The batch entry point supports ACT, SmolVLA, and PI0:
 
 ```bash
-python run_lerobot_batch_train.py \
+python Scripts/run_lerobot_batch_train.py \
   --model smolvla \
   --dataset-version aug \
   --dataset-root /path/to/lerobot/datasets \
@@ -260,7 +260,7 @@ python run_lerobot_batch_train.py \
 Use `--dry-run` to inspect all generated `lerobot-train` commands before starting:
 
 ```bash
-python run_lerobot_batch_train.py --model pi0 --dataset-version raw --dry-run
+python Scripts/run_lerobot_batch_train.py --model pi0 --dataset-version raw --dry-run
 ```
 
 The manuscript uses the following training configuration:
@@ -278,7 +278,7 @@ Evaluation uses a LeRobot policy server and an Isaac Lab client connected throug
 Start the policy server in the LeRobot environment:
 
 ```bash
-python Server/server_brain.py \
+python Scripts/Server/server_brain.py \
   --policy-path /path/to/checkpoint \
   --policy-type smolvla \
   --bind tcp://127.0.0.1:5555 \
@@ -288,7 +288,7 @@ python Server/server_brain.py \
 Start the matching Isaac Lab client:
 
 ```bash
-python Client/inference_smolvla.py \
+python Scripts/Client/inference_smolvla.py \
   --task-id pick_up_the_tube \
   --server-endpoint tcp://127.0.0.1:5555 \
   --episodes 100 \
@@ -297,9 +297,9 @@ python Client/inference_smolvla.py \
 
 Available clients:
 
-- `Client/inference_act.py`
-- `Client/inference_smolvla.py`
-- `Client/inference_pi0.py`
+- `Scripts/Client/inference_act.py`
+- `Scripts/Client/inference_smolvla.py`
+- `Scripts/Client/inference_pi0.py`
 
 Each episode records success or failure, failure reason, runtime, policy and control frequencies, and task-specific evaluator metrics.
 
@@ -307,11 +307,13 @@ Each episode records success or failure, failure reason, runtime, policy and con
 
 ```text
 .
-|-- Agent/                  # Natural-language CLI and web orchestration
-|-- Client/                 # Isaac Lab policy evaluation clients
-|-- Data/                   # Collection, replay, augmentation, conversion, and evaluators
-|-- Server/                 # Unified LeRobot ZMQ inference server
-|-- run_lerobot_batch_train.py
+|-- Asset/                  # Generated and user-provided USD assets
+|-- Scripts/
+|   |-- Agent/             # Natural-language CLI and web orchestration
+|   |-- Client/            # Isaac Lab policy evaluation clients
+|   |-- Data/              # Collection, replay, augmentation, conversion, and evaluators
+|   |-- Server/            # Unified LeRobot ZMQ inference server
+|   `-- run_lerobot_batch_train.py
 `-- README.md
 ```
 
