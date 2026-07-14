@@ -9,7 +9,7 @@
 [![LeRobot](https://img.shields.io/badge/LeRobot-ACT%20%7C%20SmolVLA%20%7C%20PI0-yellow)](https://github.com/huggingface/lerobot)
 [![Python](https://img.shields.io/badge/Python-3.x-blue)](https://www.python.org/)
 
-**Pipette** is an embodied simulation platform for data-efficient wet-lab robot learning. It combines editable laboratory assets, language-guided task registration, teleoperation data collection, success-verified simulation augmentation, LeRobot dataset conversion, VLA policy training, and closed-loop evaluation in one workflow.
+**Pipette** is an embodied-simulation toolkit for wet-lab robot learning. It provides a connected workflow for editing USD laboratory scenes, registering tasks, collecting teleoperation demonstrations, generating success-filtered simulation augmentations, converting HDF5 data to LeRobot, training policies, and running closed-loop evaluation.
 
 
 ## Platform Overview
@@ -21,12 +21,12 @@
 ## Highlights
 
 - **Editable wet-lab assets:** standardized USD/USDZ assets with geometry, materials, collision bodies, physical properties, and task semantics.
-- **Unified 11-task benchmark:** sample handling, cultureware manipulation, equipment lid operation, precise placement, and object relocation.
+- **12 wet-lab task presets:** sample handling, cultureware manipulation, equipment lid operation, precise placement, and object relocation.
 - **Physically consistent augmentation:** trajectories are re-executed in Isaac Sim with lighting, camera, speed, and action perturbations.
 - **Automatic success verification:** task-specific evaluators filter augmented episodes and record interpretable failure reasons.
-- **VLA-ready data pipeline:** HDF5 demonstrations are converted to LeRobot datasets with synchronized multi-view images, robot state, actions, and language instructions.
+- **LeRobot-ready data pipeline:** HDF5 demonstrations are converted to datasets containing synchronized top, main, and wrist RGB views, robot state, actions, and language instructions. State and action dimensions are inferred from the selected robot.
 - **Unified policy evaluation:** ACT, SmolVLA, and PI0 share the same ZMQ policy interface and Isaac Lab evaluation environment.
-- **Natural-language Agent:** web agents orchestrate scene construction, task registration, collection, augmentation, training, and evaluation.
+- **Web Agent:** a natural-language interface orchestrates scene setup, task registration, collection, replay, inspection, augmentation, conversion, training, and evaluation. It can also create USDZ assets through the optional Hunyuan3D integration.
 
 
 ## Benchmark Tasks
@@ -57,13 +57,27 @@
 | Sample and Cultureware | Equipment Operation | Placement and Relocation |
 |---|---|---|
 | Pick up the test tube | Close the centrifuge lid | Place the centrifuge tube on the balance |
-| Position the pipette over the petri dish | Open the centrifuge lid | Remove the centrifuge tube from the balance |
+| Pick up the pipette | Open the centrifuge lid | Remove the centrifuge tube from the balance |
 | Remove the petri dish from the incubator | Open the water bath lid | Place the pipette on the pipette stand |
 | Place the petri dish in the incubator | Close the spectrophotometer lid | Place conical flask on orbital shaker|
 
+## Getting Started
+
+### Before you begin
+
+Run commands from this repository root. The simulation scripts require an Isaac Sim / Isaac Lab environment; conversion, training, and policy serving require a separate LeRobot environment. The example commands below target Linux x86_64 with an NVIDIA GPU.
+
+You can check the built-in task and robot registries after installing the simulation environment:
+
+```bash
+python Data/Keyboard_collection.py --list_tasks --list_robots
+```
+
+The included task presets reference the scene assets in `Asset/Scene/` and write datasets under `datasets/` by default. Use `Data/task_registry.py` to inspect or customize task-specific USD paths, camera settings, and success criteria.
+
 ## Installation
 
-### 1. Install the project and dependencies
+### 1. Create the environments
 
 Pipette uses two separate Conda environments:
 
@@ -126,8 +140,6 @@ The Agent clears `PYTHONHOME` and `PYTHONPATH` when launching LeRobot commands t
 
 ### 2. Configure local paths
 
-The included task presets use example paths under `/root/gpufree-data`. Update the USD and dataset paths in `Data/task_registry.py`, or register your own scene through the Agent.
-
 For Agent-managed execution:
 
 ```bash
@@ -163,7 +175,7 @@ Open [http://127.0.0.1:7860](http://127.0.0.1:7860), then enter instructions suc
 用 PI0 运行推理评估
 ```
 
-See [`Agent/README.md`](Agent/README.md) for Agent configuration, OpenAI-compatible intent parsing, web controls, and optional Tencent Hunyuan3D asset generation.
+The Agent can also replay and inspect datasets, delete selected demonstrations, register a task from a USD scene, and start environment setup. See [`Agent/README.md`](Agent/README.md) for configuration, web controls, intent parsing, and the optional Tencent Hunyuan3D integration.
 
 ## Data Pipeline
 
@@ -227,7 +239,7 @@ python Data/hdf5_to_lerobot.py \
   --stride 3
 ```
 
-The converter writes three RGB features, an 8-dimensional state, an 8-dimensional action, and the language instruction. Frames without a fresh visual observation are filtered to preserve temporal alignment.
+The converter writes three RGB features, robot state, actions, and the language instruction. It infers image resolution and state/action widths from the input HDF5 file. Frames without a fresh visual observation are filtered to preserve temporal alignment.
 
 ## Policy Training
 
@@ -308,8 +320,10 @@ Each episode records success or failure, failure reason, runtime, policy and con
 ```text
 .
 |-- Agent/                  # Natural-language CLI and web orchestration
+|-- Asset/                  # Laboratory scenes, robots, and generated assets
 |-- Client/                 # Isaac Lab policy evaluation clients
 |-- Data/                   # Collection, replay, augmentation, conversion, and evaluators
+|-- Robot/                  # Robot registry and camera specifications
 |-- Server/                 # Unified LeRobot ZMQ inference server
 |-- run_lerobot_batch_train.py
 `-- README.md
@@ -318,7 +332,7 @@ Each episode records success or failure, failure reason, runtime, policy and con
 
 ## Limitations
 
-- The current benchmark focuses on single-arm Franka Panda tasks.
+- The task presets and success thresholds are tuned primarily for the included Franka Panda scenes. The active robot registry also includes Nero Gripper D435 and UFactory xArm7; users should validate each task after changing the robot or scene.
 - Systematic real-robot validation and sim-to-real transfer are future work.
 - Success evaluators are currently task-specific and threshold-based.
 - Language-guided task registration still requires users to verify USD paths, prim paths, camera settings, and success thresholds.

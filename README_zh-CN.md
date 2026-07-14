@@ -9,7 +9,7 @@
 [![LeRobot](https://img.shields.io/badge/LeRobot-ACT%20%7C%20SmolVLA%20%7C%20PI0-yellow)](https://github.com/huggingface/lerobot)
 [![Python](https://img.shields.io/badge/Python-3.x-blue)](https://www.python.org/)
 
-**Pipette** 是一个面向湿实验室机器人学习的具身仿真平台。项目将可编辑实验室资产、语言引导任务注册、遥操作数据采集、成功验证仿真增强、LeRobot 数据转换、VLA 策略训练和闭环评测整合为统一工作流。
+**Pipette** 是一套面向湿实验室机器人学习的具身仿真工具链。它将 USD 实验室场景编辑、任务注册、遥操作示教采集、成功筛选的数据增强、HDF5 至 LeRobot 转换、策略训练和闭环评测串联为一条可复用的工作流。
 
 ## 平台总览
 
@@ -20,12 +20,12 @@
 ## 主要特点
 
 - **可编辑湿实验室资产：** 采用 USD/USDZ 格式统一表示几何、材质、碰撞体、物理属性和任务语义。
-- **统一的 11 任务基准：** 覆盖样品处理、培养耗材操作、设备开合、精确放置和物体转移。
+- **12 个湿实验室任务预设：** 覆盖样品处理、培养耗材操作、设备开合、精确放置和物体转移。
 - **物理一致的数据增强：** 在 Isaac Sim 中重新执行轨迹，并施加光照、相机、速度和动作扰动。
 - **自动成功验证：** 使用任务级评估器筛选增强 episode，并记录可解释的失败原因。
-- **适配 VLA 的数据链路：** 将同步的多视角图像、机器人状态、动作和语言指令从 HDF5 转换为 LeRobot 数据格式。
+- **面向 LeRobot 的数据链路：** 将同步的 Top、Main、Wrist 三路 RGB 图像、机器人状态、动作和语言指令从 HDF5 转换为 LeRobot 数据集；状态与动作维度会随所选机器人自动识别。
 - **统一策略评测：** ACT、SmolVLA 和 PI0 通过相同的 ZMQ 接口连接 Isaac Lab 评测环境。
-- **自然语言 Agent：** 通过网页完成环境搭建、任务注册、数据采集、增强、训练和评测。
+- **网页 Agent：** 通过自然语言完成环境搭建、任务注册、采集、回放、检查、增强、转换、训练和评测；可选集成腾讯混元生 3D 生成 USDZ 资产。
 
 ## 基准任务
 
@@ -56,13 +56,27 @@
 | 样品与培养耗材 | 设备开合操作 | 仪器放置与转移 |
 |---|---|---|
 | 拿起试管 | 关闭离心机盖 | 将离心管放到电子天平上 |
-| 将移液枪定位到培养皿上方 | 打开离心机盖 | 从电子天平取下离心管 |
+| 拿起移液枪 | 打开离心机盖 | 从电子天平取下离心管 |
 | 从培养箱中取出培养皿 | 打开水浴锅盖 | 将移液枪放到移液枪架上 |
 | 将培养皿放入培养箱 | 关闭分光光度计盖 | 将锥形瓶放在摇床台上 |
 
+## 快速了解
+
+### 开始前
+
+请在当前仓库根目录执行命令。仿真脚本依赖 Isaac Sim / Isaac Lab 环境；数据转换、训练和策略服务应在独立的 LeRobot 环境中执行。以下安装示例面向配备 NVIDIA GPU 的 Linux x86_64 环境。
+
+完成仿真环境配置后，可用以下命令查看内置任务与机器人：
+
+```bash
+python Data/Keyboard_collection.py --list_tasks --list_robots
+```
+
+内置任务预设使用 `Asset/Scene/` 中的场景，并默认把数据写入 `datasets/`。可在 `Data/task_registry.py` 中查看或修改每个任务的 USD 路径、相机参数和成功判定条件。
+
 ## 环境安装
 
-### 1. 安装项目与依赖
+### 1. 创建运行环境
 
 Pipette 使用两个相互独立的 Conda 环境：
 
@@ -126,10 +140,6 @@ Agent 启动 LeRobot 命令时还会清理 `PYTHONHOME` 和 `PYTHONPATH`，进�
 
 ### 2. 配置本地路径
 
-仓库中的任务预设使用 `/root/gpufree-data` 下的示例路径。请根据实际环境修改 `Data/task_registry.py` 中的 USD 和数据集路径，也可以通过 Agent 注册新场景。
-
-复制本地配置模板：
-
 ```bash
 cp Agent/local_config.example.env Agent/local_config.env
 ```
@@ -153,17 +163,9 @@ AGENT_ASSET_DIR="/path/to/assets"
 python Agent/web_agent.py
 ```
 
-打开 [http://127.0.0.1:7860](http://127.0.0.1:7860)，然后输入：
+打开 [http://127.0.0.1:7860](http://127.0.0.1:7860)，然后进行后续操作
 
-```text
-我要采集数据
-增强试管抓取数据
-把 HDF5 转成 LeRobot
-训练 SmolVLA
-用 PI0 运行推理评估
-```
-
-Agent 的接口配置、网页控制和腾讯混元生 3D 资产生成功能请参阅 [`Agent/README.md`](Agent/README.md)。
+Agent 还支持回放与检查数据集、删除指定 demo、从 USD 场景注册任务和启动环境搭建。接口配置、网页控制、意图解析和可选的腾讯混元生 3D 功能见 [`Agent/README.md`](Agent/README.md)。
 
 ## 数据流程
 
@@ -211,7 +213,6 @@ python Data/Generate_data.py \
 - 轨迹速度扰动和时间重采样；
 - Top、Main 和 Wrist 相机位姿扰动；
 - 有界关节动作噪声；
-- 任务级成功筛选。
 
 ### 4. 转换为 LeRobot 数据集
 
@@ -227,7 +228,7 @@ python Data/hdf5_to_lerobot.py \
   --stride 3
 ```
 
-转换后的数据包含三路 RGB 图像、8 维机器人状态、8 维动作和语言指令。转换器会过滤视觉观测未及时更新的帧，以保持观测与动作的时序对齐。
+转换后的数据包含三路 RGB 图像、机器人状态、动作和语言指令。转换器会从输入 HDF5 自动识别图像分辨率以及状态、动作维度，并过滤视觉观测未及时更新的帧，以保持观测与动作的时序对齐。
 
 ## 训练
 
@@ -308,8 +309,10 @@ python Client/inference_smolvla.py \
 ```text
 .
 |-- Agent/                  # 自然语言命令行与网页调度
+|-- Asset/                  # 实验室场景、机器人和生成资产
 |-- Client/                 # Isaac Lab 策略评测客户端
 |-- Data/                   # 采集、回放、增强、转换和成功评估
+|-- Robot/                  # 机器人注册表与相机配置
 |-- Server/                 # 统一 LeRobot ZMQ 推理服务
 |-- run_lerobot_batch_train.py
 `-- README.md
@@ -317,7 +320,7 @@ python Client/inference_smolvla.py \
 
 ## 当前限制
 
-- 当前基准主要面向 Franka Panda 单臂任务。
+- 任务预设与成功阈值主要针对随仓库提供的 Franka Panda 场景调校。当前启用的机器人注册表还包含 Nero Gripper D435 与 UFactory xArm7；更换机器人或场景后，请逐项验证任务表现。
 - 尚未完成系统性的真实机器人验证和 Sim-to-Real 实验。
 - 任务成功主要由针对不同任务编写的阈值评估器判定。
 - 语言引导任务注册后，仍需人工确认 USD 路径、Prim 路径、相机配置和成功阈值。
