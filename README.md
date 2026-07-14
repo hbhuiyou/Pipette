@@ -26,7 +26,7 @@
 - **Automatic success verification:** task-specific evaluators filter augmented episodes and record interpretable failure reasons.
 - **VLA-ready data pipeline:** HDF5 demonstrations are converted to LeRobot datasets with synchronized multi-view images, robot state, actions, and language instructions.
 - **Unified policy evaluation:** ACT, SmolVLA, and PI0 share the same ZMQ policy interface and Isaac Lab evaluation environment.
-- **Natural-language Agent:** command-line and web agents orchestrate scene construction, task registration, collection, augmentation, training, and evaluation.
+- **Natural-language Agent:** web agents orchestrate scene construction, task registration, collection, augmentation, training, and evaluation.
 
 
 ## Benchmark Tasks
@@ -67,7 +67,7 @@
 
 Pipette uses two separate Conda environments:
 
-- `env_isaaclab`: NVIDIA Isaac Sim 5.1.0 and Isaac Lab 2.3.0
+- `env_isaaclab`: NVIDIA Isaac Sim 5.1.0 and Isaac Lab 2.3.2
 - `lerobot`: LeRobot with ACT, SmolVLA, and PI0 support
 
 Keeping the simulation and policy environments separate avoids Python dependency conflicts.
@@ -85,7 +85,7 @@ conda activate env_isaaclab
 python -m pip install --upgrade pip
 
 python -m pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
-python -m pip install "isaaclab[isaacsim,all]==2.3.0" --extra-index-url https://pypi.nvidia.com
+python -m pip install "isaaclab[isaacsim,all]==2.3.2" --extra-index-url https://pypi.nvidia.com
 python -m pip install h5py pyzmq
 ```
 

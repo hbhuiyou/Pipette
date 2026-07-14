@@ -25,7 +25,7 @@
 - **自动成功验证：** 使用任务级评估器筛选增强 episode，并记录可解释的失败原因。
 - **适配 VLA 的数据链路：** 将同步的多视角图像、机器人状态、动作和语言指令从 HDF5 转换为 LeRobot 数据格式。
 - **统一策略评测：** ACT、SmolVLA 和 PI0 通过相同的 ZMQ 接口连接 Isaac Lab 评测环境。
-- **自然语言 Agent：** 通过命令行或网页完成环境搭建、任务注册、数据采集、增强、训练和评测。
+- **自然语言 Agent：** 通过网页完成环境搭建、任务注册、数据采集、增强、训练和评测。
 
 ## 基准任务
 
@@ -66,7 +66,7 @@
 
 Pipette 使用两个相互独立的 Conda 环境：
 
-- `env_isaaclab`：安装 NVIDIA Isaac Sim 5.1.0 和 Isaac Lab 2.3.0
+- `env_isaaclab`：安装 NVIDIA Isaac Sim 5.1.0 和 Isaac Lab 2.3.2
 - `lerobot`：安装支持 ACT、SmolVLA 和 PI0 的 LeRobot
 
 将仿真环境和策略训练环境分开，可以避免 Python 版本和二进制依赖冲突。
@@ -84,7 +84,7 @@ conda activate env_isaaclab
 python -m pip install --upgrade pip
 
 python -m pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
-python -m pip install "isaaclab[isaacsim,all]==2.3.0" --extra-index-url https://pypi.nvidia.com
+python -m pip install "isaaclab[isaacsim,all]==2.3.2" --extra-index-url https://pypi.nvidia.com
 python -m pip install h5py pyzmq
 ```
 
