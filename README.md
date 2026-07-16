@@ -18,15 +18,46 @@
   <img src="./docs/figures/pipette_overview.png" alt="Pipette platform overview" width="100%">
 </p>
 
+## Repository Structure
+
+```text
+.
+|-- Asset/                      # Shared laboratory scenes, robots, and generated assets
+|   |-- AI3D/                   # AI-generated 3D assets
+|   |-- Asset/                  # Laboratory equipment and object assets
+|   |-- Robot/                  # Robot assets
+|   `-- Scene/                  # Laboratory scene assets
+|-- docs/                       # Documentation images and demonstration media
+|-- Scripts/                    # Data, training, inference, and evaluation scripts
+|   |-- Agent/                  # Natural-language CLI and web orchestration
+|   |-- Asset/                  # Assets used by the scripts
+|   |-- Client/                 # Isaac Lab policy evaluation clients
+|   |-- Data/                   # Collection, replay, augmentation, conversion, and evaluators
+|   |-- Robot/                  # Robot registry and camera specifications
+|   |-- Server/                 # Unified LeRobot ZMQ inference server
+|   `-- run_lerobot_batch_train.py
+|-- README.md
+`-- README_zh-CN.md
+```
+
+> [!IMPORTANT]
+> Before reproducing this project, download the complete asset package from [Pipette Asset](https://huggingface.co/datasets/huanbo1/pipette-asset). After downloading and extracting it, place `AI3D/`, `Asset/`, `Robot/`, and `Scene/` directly under the project-level `Asset/` directory (`Pipette/Asset/`, not `Pipette/Scripts/Asset/`) and preserve the directory structure shown above.
+
+> [!TIP]
+> If you prefer not to collect and convert data from scratch, download the provided datasets and place them in the corresponding locations:
+>
+> - [Pipette HDF5 Datasets](https://huggingface.co/datasets/huanbo1/pipette-hdf5-datasets): download and extract them to `Pipette/Scripts/datasets/` for inspection, replay, augmentation, and format conversion.
+> - [Pipette LeRobot Datasets](https://huggingface.co/datasets/huanbo1/pipette-lerobot-datasets): download and extract them to your LeRobot dataset directory, such as `/path/to/lerobot/datasets/`, then point `--dataset-root` or `--dataset.repo_id` to the actual location when training.
+
 ## Highlights
 
 - **Editable wet-lab assets:** standardized USD/USDZ assets with geometry, materials, collision bodies, physical properties, and task semantics.
 - **12 wet-lab task presets:** sample handling, cultureware manipulation, equipment lid operation, precise placement, and object relocation.
 - **Physically consistent augmentation:** trajectories are re-executed in Isaac Sim with lighting, camera, speed, and action perturbations.
 - **Automatic success verification:** task-specific evaluators filter augmented episodes and record interpretable failure reasons.
-- **LeRobot-ready data pipeline:** HDF5 demonstrations are converted to datasets containing synchronized top, main, and wrist RGB views, robot state, actions, and language instructions. State and action dimensions are inferred from the selected robot.
+- **LeRobot-ready data pipeline:** HDF5 demonstrations are converted to datasets containing synchronized top, main, and wrist RGB views, robot state, actions, and language instructions.
 - **Unified policy evaluation:** ACT, SmolVLA, and PI0 share the same ZMQ policy interface and Isaac Lab evaluation environment.
-- **Web Agent:** a natural-language interface orchestrates scene setup, task registration, collection, replay, inspection, augmentation, conversion, training, and evaluation. It can also create USDZ assets through the optional Hunyuan3D integration.
+- **Natural-language Agent:** a web interface orchestrates scene setup, task registration, data collection, augmentation, training, and evaluation.
 
 
 ## Benchmark Tasks
@@ -140,8 +171,6 @@ The Agent clears `PYTHONHOME` and `PYTHONPATH` when launching LeRobot commands t
 
 ### 2. Configure local paths
 
-For Agent-managed execution:
-
 ```bash
 cp Agent/local_config.example.env Agent/local_config.env
 ```
@@ -153,6 +182,12 @@ LEROBOT_PYTHON="/path/to/lerobot/python"
 LEROBOT_MODEL_ROOT="/path/to/models"
 AGENT_ENV_TEMPLATE_USD="/path/to/lab.usd"
 AGENT_ASSET_DIR="/path/to/assets"
+TENCENTCLOUD_SECRET_ID="your_secret_id"
+TENCENTCLOUD_SECRET_KEY="your_secret_key"
+TENCENTCLOUD_REGION="ap-guangzhou"
+DEEPSEEK_API_KEY=""
+DEEPSEEK_BASE_URL="https://api.deepseek.com"
+DEEPSEEK_MODEL="deepseek-v4-pro"
 ```
 
 Do not commit API keys or cloud credentials stored in `Agent/local_config.env`.
@@ -165,15 +200,7 @@ Do not commit API keys or cloud credentials stored in `Agent/local_config.env`.
 python Agent/web_agent.py
 ```
 
-Open [http://127.0.0.1:7860](http://127.0.0.1:7860), then enter instructions such as:
-
-```text
-我要采集数据
-增强试管抓取数据
-把 HDF5 转成 LeRobot
-训练 SmolVLA
-用 PI0 运行推理评估
-```
+Open [http://127.0.0.1:7860](http://127.0.0.1:7860), then continue with the desired operation.
 
 The Agent can also replay and inspect datasets, delete selected demonstrations, register a task from a USD scene, and start environment setup. See [`Agent/README.md`](Agent/README.md) for configuration, web controls, intent parsing, and the optional Tencent Hunyuan3D integration.
 
@@ -223,7 +250,6 @@ The augmentation workers re-execute trajectories and regenerate observations ins
 - temporal speed perturbation and trajectory resampling;
 - top, main, and wrist camera pose perturbation;
 - bounded joint-action noise;
-- task-level success filtering.
 
 ### 4. Convert HDF5 to LeRobot
 
@@ -259,7 +285,7 @@ lerobot-train \
 
 Replace the dataset and model output paths with actual absolute paths. This example trains only the `pick_tube` task and is useful for validating the dataset, GPU memory, and training environment before batch training.
 
-The batch entry point supports ACT, SmolVLA, and PI0:
+The batch entry point supports ACT, SmolVLA, and PI0, with Franka as the default robot arm:
 
 ```bash
 python run_lerobot_batch_train.py \
@@ -314,21 +340,6 @@ Available clients:
 - `Client/inference_pi0.py`
 
 Each episode records success or failure, failure reason, runtime, policy and control frequencies, and task-specific evaluator metrics.
-
-## Repository Structure
-
-```text
-.
-|-- Agent/                  # Natural-language CLI and web orchestration
-|-- Asset/                  # Laboratory scenes, robots, and generated assets
-|-- Client/                 # Isaac Lab policy evaluation clients
-|-- Data/                   # Collection, replay, augmentation, conversion, and evaluators
-|-- Robot/                  # Robot registry and camera specifications
-|-- Server/                 # Unified LeRobot ZMQ inference server
-|-- run_lerobot_batch_train.py
-`-- README.md
-```
-
 
 ## Limitations
 

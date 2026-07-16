@@ -17,6 +17,37 @@
   <img src="./docs/figures/pipette_overview.png" alt="Pipette 平台总览" width="100%">
 </p>
 
+## 仓库结构
+
+```text
+.
+|-- Asset/                      # 平台共享的实验室场景、机器人和生成资产
+|   |-- AI3D/                   # AI 生成的 3D 资产
+|   |-- Asset/                  # 实验室设备与物体资产
+|   |-- Robot/                  # 机器人资产
+|   `-- Scene/                  # 实验室场景资产
+|-- docs/                       # 文档图片与演示资源
+|-- Scripts/                    # 数据、训练、推理与评测脚本
+|   |-- Agent/                  # 自然语言命令行与网页调度
+|   |-- Asset/                  # 脚本使用的实验室场景、机器人和生成资产
+|   |-- Client/                 # Isaac Lab 策略评测客户端
+|   |-- Data/                   # 采集、回放、增强、转换和成功评估
+|   |-- Robot/                  # 机器人注册表与相机配置
+|   |-- Server/                 # 统一 LeRobot ZMQ 推理服务
+|   |-- run_lerobot_batch_train.py
+|-- README.md
+`-- README_zh-CN.md
+```
+
+> [!IMPORTANT]
+> 复现本项目前，请从 [Pipette Asset](https://huggingface.co/datasets/huanbo1/pipette-asset) 下载完整资产包。下载并解压后，将 `AI3D/`、`Asset/`、`Robot/` 和 `Scene/` 分别放置在项目根目录的 `Asset/` 下（即 `Pipette/Asset/`，不是 `Pipette/Scripts/Asset/`），并保持上方所示的目录结构。
+
+> [!TIP]
+> 如果不想从头采集和转换数据，可以直接下载作者提供的数据集并放置到对应位置：
+>
+> - [Pipette HDF5 Datasets](https://huggingface.co/datasets/huanbo1/pipette-hdf5-datasets)：下载并解压到 `Pipette/Scripts/datasets/`，供数据检查、回放、增强和格式转换使用。
+> - [Pipette LeRobot Datasets](https://huggingface.co/datasets/huanbo1/pipette-lerobot-datasets)：下载并解压到 LeRobot 数据集目录，例如 `/path/to/lerobot/datasets/`，训练时将 `--dataset-root` 或 `--dataset.repo_id` 指向实际位置。
+
 ## 主要特点
 
 - **可编辑湿实验室资产：** 采用 USD/USDZ 格式统一表示几何、材质、碰撞体、物理属性和任务语义。
@@ -151,9 +182,15 @@ LEROBOT_PYTHON="/path/to/lerobot/python"
 LEROBOT_MODEL_ROOT="/path/to/models"
 AGENT_ENV_TEMPLATE_USD="/path/to/lab.usd"
 AGENT_ASSET_DIR="/path/to/assets"
+TENCENTCLOUD_SECRET_ID="your_secret_id"
+TENCENTCLOUD_SECRET_KEY="your_secret_key"
+TENCENTCLOUD_REGION="ap-guangzhou"
+DEEPSEEK_API_KEY=""
+DEEPSEEK_BASE_URL="https://api.deepseek.com"
+DEEPSEEK_MODEL="deepseek-v4-pro"
 ```
 
-请勿将包含 API Key 或云服务密钥的 `Agent/local_config.env` 提交到公开仓库。
+请勿将包含 API Key 或云服务密钥的 `Agent/local_config.env` 提交到公开仓库.
 
 ## 快速开始
 
@@ -248,7 +285,7 @@ lerobot-train \
 
 请将数据集和模型输出路径替换为实际的绝对路径。该示例仅训练 `pick_tube` 单个任务，适合在运行批量训练前验证数据集、显存和训练环境。
 
-批量训练脚本支持 ACT、SmolVLA 和 PI0：
+批量训练脚本支持 ACT、SmolVLA 和 PI0,以Frank机械臂为默认：
 
 ```bash
 python run_lerobot_batch_train.py \
@@ -303,20 +340,6 @@ python Client/inference_smolvla.py \
 - `Client/inference_pi0.py`
 
 每个 episode 会记录成功或失败、失败原因、运行时间、策略频率、控制频率和任务评估指标。
-
-## 仓库结构
-
-```text
-.
-|-- Agent/                  # 自然语言命令行与网页调度
-|-- Asset/                  # 实验室场景、机器人和生成资产
-|-- Client/                 # Isaac Lab 策略评测客户端
-|-- Data/                   # 采集、回放、增强、转换和成功评估
-|-- Robot/                  # 机器人注册表与相机配置
-|-- Server/                 # 统一 LeRobot ZMQ 推理服务
-|-- run_lerobot_batch_train.py
-`-- README.md
-```
 
 ## 当前限制
 
