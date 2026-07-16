@@ -21,7 +21,7 @@
 ## Repository Structure
 
 ```text
-.
+Pipette
 |-- Asset/                      # Shared laboratory scenes, robots, and generated assets
 |   |-- AI3D/                   # AI-generated 3D assets
 |   |-- Asset/                  # Laboratory equipment and object assets
